@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -20,14 +21,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build, tests and SonarQube analysis completed!'
+            echo 'Build, tests, SonarQube analysis and Quality Gate completed!'
         }
         failure {
             echo 'Pipeline failed. Check the console output.'
         }
     }
 }
+
