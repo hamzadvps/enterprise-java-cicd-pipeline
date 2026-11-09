@@ -2,28 +2,32 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Build and Test') {
             steps {
                 dir('app') {
                     sh 'chmod +x mvnw'
-                    sh './mvnw -B clean package'
+                    sh './mvnw -B clean verify'
                 }
             }
         }
 
-        stage('Test') {
+        stage('SonarQube Analysis') {
             steps {
-                echo 'Maven package completed successfully, including tests.'
+                withSonarQubeEnv('SonarQube') {
+                    dir('app') {
+                        sh './mvnw -B sonar:sonar -Dsonar.projectKey=customer-management'
+                    }
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'Customer Management build completed successfully!'
+            echo 'Build, tests and SonarQube analysis completed!'
         }
         failure {
-            echo 'Build failed. Check the console output.'
+            echo 'Pipeline failed. Check the console output.'
         }
     }
 }
