@@ -15,7 +15,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     dir('app') {
-                        sh './mvnw -B sonar:sonar -Dsonar.projectKey=customer-management'
+                        sh './mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=customer-management'
                     }
                 }
             }
